@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t yprince/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true yprince/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t yprince/multi-client ./client
+  - docker build -t yprince/multi-nginx ./nginx
+  - docker build -t yprince/multi-server ./server
+  - docker build -t yprince/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push yprince/multi-client
+  - docker push yprince/multi-nginx
+  - docker push yprince/multi-server
+  - docker push yprince/multi-worker
