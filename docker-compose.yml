@@ -11,21 +11,21 @@ services:
       - api
       - client
     restart: always
-    build: 
+    build:
       dockerfile: Dockerfile.dev
       context: ./nginx
-    ports: 
-      - '3050:80'
+    ports:
+      - "3050:80"
   api:
     depends_on:
       - postgres
-    build: 
+    build:
       dockerfile: Dockerfile.dev
       context: ./server
-    volumes: 
+    volumes:
       - /app/node_modules
       - ./server:/app
-    environment: 
+    environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PGUSER=postgres
@@ -35,19 +35,19 @@ services:
       - PGPORT=5432
   client:
     stdin_open: true
-    build: 
+    build:
       dockerfile: Dockerfile.dev
       context: ./client
-    volumes: 
+    volumes:
       - /app/node_modules
       - ./client:/app
   worker:
-    build: 
-      dockerfile: Dockerfile.dev
-      context: ./worker
-    volumes: 
-      - /app/node_modules
-      - ./worker:/app
-    environment: 
+    environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
